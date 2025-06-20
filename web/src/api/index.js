@@ -87,7 +87,7 @@ export default {
         getAll: (params) => api.get('/bookings/list', { params }),
         getMy: (params) => api.get('/bookings/my', { params }),
         getById: (id) => api.get(`/bookings/${id}`),
-        create: (data) => api.post('/bookings', data),
+        book: (data) => api.post('/bookings/book', data),
         update: (id, data) => api.put(`/bookings/${id}`, data),
         delete: (id) => api.delete(`/bookings/${id}`),
         cancel: (id) => api.put(`/bookings/${id}/cancel`),

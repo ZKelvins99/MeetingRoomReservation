@@ -70,7 +70,7 @@
                 type="primary"
                 size="large"
                 icon="el-icon-plus"
-                @click="$router.push('/booking')"
+                @click="$router.push('/bookings')"
             >
               预订会议室
             </el-button>

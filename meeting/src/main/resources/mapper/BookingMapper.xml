@@ -80,9 +80,18 @@
             room_id, user_id, meeting_title, meeting_desc, start_time, end_time,
             attendee_count, attendees, booking_status, remind_time, is_reminded
         ) VALUES (
-            #{roomId}, #{userId}, #{meetingTitle}, #{meetingDesc}, #{startTime}, #{endTime},
-            #{attendeeCount}, #{attendees}, #{bookingStatus}, #{remindTime}, #{isReminded}
-        )
+                     #{roomId, jdbcType=INTEGER},
+                     #{userId, jdbcType=INTEGER},
+                     #{meetingTitle, jdbcType=VARCHAR},
+                     #{meetingDesc, jdbcType=VARCHAR},
+                     #{startTime, jdbcType=TIMESTAMP},
+                     #{endTime, jdbcType=TIMESTAMP},
+                     #{attendeeCount, jdbcType=INTEGER},
+                     #{attendees, jdbcType=VARCHAR},
+                     #{bookingStatus, jdbcType=VARCHAR},
+                     #{remindTime, jdbcType=INTEGER},
+                     #{isReminded, jdbcType=BIT}
+                 )
     </insert>
 
     <update id="update" parameterType="com.company.meeting.entity.MeetingBooking">
