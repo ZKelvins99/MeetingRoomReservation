@@ -61,8 +61,8 @@ export default {
     return {
       loading: false,
       loginForm: {
-        username: 'admin',
-        password: 'admin123'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [
@@ -83,9 +83,13 @@ export default {
         try {
           await this.$store.dispatch('auth/login', this.loginForm)
           this.$message.success('登录成功')
-          this.$router.push('/')
+
+          // 重定向到原来要访问的页面或首页
+          const redirect = this.$route.query.redirect || '/'
+          this.$router.push(redirect)
         } catch (error) {
           console.error('登录失败:', error)
+          this.$message.error(error.message || '登录失败，请检查用户名和密码')
         } finally {
           this.loading = false
         }
@@ -120,31 +124,35 @@ export default {
 }
 
 .login-header h2 {
-  color: #333;
+  color: #2c3e50;
   margin-bottom: 10px;
   font-weight: 600;
 }
 
 .login-header p {
-  color: #666;
+  color: #7f8c8d;
   font-size: 14px;
 }
 
 .login-form {
-  margin-bottom: 20px;
+  width: 100%;
 }
 
 .login-btn {
   width: 100%;
-  height: 45px;
-  font-size: 16px;
-  border-radius: 8px;
+  margin-top: 10px;
 }
 
 .login-tips {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
   text-align: center;
+}
+
+.login-tips p {
+  color: #7f8c8d;
   font-size: 12px;
-  color: #999;
-  line-height: 1.6;
+  margin: 5px 0;
 }
 </style>

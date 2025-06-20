@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import api from '../../api'
 
 const TOKEN_KEY = 'meeting_token'
 
@@ -39,26 +40,14 @@ const mutations = {
 const actions = {
     async login({ commit }, loginForm) {
         try {
-            // 模拟登录API调用
-            const mockResponse = {
-                data: {
-                    token: 'mock-jwt-token-' + Date.now(),
-                    user: {
-                        id: loginForm.username === 'admin' ? 1 : 2,
-                        username: loginForm.username,
-                        realName: loginForm.username === 'admin' ? '系统管理员' : '普通用户',
-                        role: loginForm.username === 'admin' ? 'ADMIN' : 'USER',
-                        email: loginForm.username + '@company.com'
-                    }
-                }
-            }
-
-            const { token, user } = mockResponse.data
+            // 调用真实的后端 API
+            const response = await api.auth.login(loginForm)
+            const { token, user } = response.data
 
             commit('SET_TOKEN', token)
             commit('SET_USER_INFO', user)
 
-            return mockResponse
+            return response
         } catch (error) {
             commit('CLEAR_AUTH')
             throw error
@@ -71,13 +60,11 @@ const actions = {
         }
 
         try {
-            // 模拟获取用户信息
-            const userInfo = state.userInfo
-            if (userInfo) {
-                commit('SET_USER_INFO', userInfo)
-                return userInfo
-            }
-            throw new Error('用户信息不存在')
+            const response = await api.auth.getUserInfo()
+            const userInfo = response.data.user
+
+            commit('SET_USER_INFO', userInfo)
+            return userInfo
         } catch (error) {
             commit('CLEAR_AUTH')
             throw error
@@ -86,8 +73,7 @@ const actions = {
 
     async logout({ commit }) {
         try {
-            // 模拟登出API调用
-            console.log('用户登出')
+            await api.auth.logout()
         } catch (error) {
             console.error('登出请求失败:', error)
         } finally {

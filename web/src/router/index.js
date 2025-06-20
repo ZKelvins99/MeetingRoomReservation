@@ -22,13 +22,13 @@ const routes = [
                 path: 'dashboard',
                 name: 'Dashboard',
                 component: () => import('../views/Dashboard.vue'),
-                meta: { title: '首页', icon: 'el-icon-s-home' }
+                meta: { title: '仪表盘', icon: 'el-icon-s-home' }
             },
             {
-                path: 'booking',
-                name: 'Booking',
+                path: 'bookings',
+                name: 'Bookings',
                 component: () => import('../views/BookingManage.vue'),
-                meta: { title: '预订会议室', icon: 'el-icon-calendar' }
+                meta: { title: '预约管理', icon: 'el-icon-date' }
             },
             {
                 path: 'my-bookings',
@@ -83,7 +83,7 @@ const router = new VueRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const token = store.getters['auth/token']
     const userInfo = store.getters['auth/userInfo']
 
@@ -102,8 +102,25 @@ router.beforeEach((to, from, next) => {
             return
         }
 
+        // 如果有 token 但没有用户信息，尝试获取用户信息
+        if (!userInfo) {
+            try {
+                await store.dispatch('auth/getUserInfo')
+            } catch (error) {
+                // 获取用户信息失败，清除 token 并跳转到登录页
+                console.error('获取用户信息失败:', error)
+                store.dispatch('auth/logout')
+                next({
+                    path: '/login',
+                    query: { redirect: to.fullPath }
+                })
+                return
+            }
+        }
+
         // 检查管理员权限
-        if (to.meta.requiresAdmin && userInfo?.role !== 'ADMIN') {
+        const currentUserInfo = store.getters['auth/userInfo']
+        if (to.meta.requiresAdmin && currentUserInfo?.role !== 'ADMIN') {
             Vue.prototype.$message.error('权限不足')
             next('/')
             return

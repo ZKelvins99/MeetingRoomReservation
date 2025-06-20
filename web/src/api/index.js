@@ -5,7 +5,7 @@ import router from '../router'
 
 // 创建axios实例
 const api = axios.create({
-    baseURL: process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8080/api',
+    baseURL: process.env.NODE_ENV === 'production' ? '/api' : '/api', // 开发环境使用代理
     timeout: 30000
 })
 
@@ -36,7 +36,6 @@ api.interceptors.response.use(
     },
     error => {
         console.error('响应错误:', error)
-
         let message = '网络错误'
         if (error.response) {
             const { status } = error.response
@@ -78,20 +77,21 @@ export default {
     rooms: {
         getAll: () => api.get('/rooms/list'),
         getById: (id) => api.get(`/rooms/${id}`),
-        getAvailable: (params) => api.get('/rooms/available', { params }),
-        add: (data) => api.post('/rooms/add', data),
-        update: (data) => api.put('/rooms/update', data),
+        create: (data) => api.post('/rooms', data),
+        update: (id, data) => api.put(`/rooms/${id}`, data),
         delete: (id) => api.delete(`/rooms/${id}`)
     },
 
-    // 预订相关
+    // 预约相关
     bookings: {
-        book: (data) => api.post('/bookings/book', data),
+        getAll: (params) => api.get('/bookings/list', { params }),
         getMy: (params) => api.get('/bookings/my', { params }),
-        getAll: (params) => api.get('/bookings/all', { params }),
         getById: (id) => api.get(`/bookings/${id}`),
+        create: (data) => api.post('/bookings', data),
+        update: (id, data) => api.put(`/bookings/${id}`, data),
+        delete: (id) => api.delete(`/bookings/${id}`),
         cancel: (id) => api.put(`/bookings/${id}/cancel`),
-        getQRCode: (id) => api.get(`/bookings/${id}/qrcode`)
+        getByRoom: (roomId, params) => api.get(`/bookings/room/${roomId}`, { params })
     },
 
     // 签到相关
