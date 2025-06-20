@@ -31,6 +31,7 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         User user = userMapper.findByUsername(request.getUsername());
         if (user == null) {
+            System.out.println("用户不存在");
             throw new RuntimeException("用户不存在");
         }
 

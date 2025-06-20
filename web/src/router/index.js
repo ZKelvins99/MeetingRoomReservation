@@ -3,6 +3,13 @@ import VueRouter from 'vue-router'
 import store from '../store'
 
 Vue.use(VueRouter)
+// 修复NavigationDuplicated错误
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => {
+        if (err.name !== 'NavigationDuplicated') throw err
+    })
+}
 
 const routes = [
     {
@@ -81,6 +88,7 @@ const router = new VueRouter({
     base: process.env.BASE_URL,
     routes
 })
+
 
 // 路由守卫
 router.beforeEach(async (to, from, next) => {

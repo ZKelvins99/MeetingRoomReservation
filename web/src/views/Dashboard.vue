@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'Dashboard',
@@ -177,7 +177,7 @@ export default {
   background: white;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   gap: 15px;
@@ -194,10 +194,21 @@ export default {
   color: white;
 }
 
-.stat-icon.primary { background: #409eff; }
-.stat-icon.success { background: #67c23a; }
-.stat-icon.warning { background: #e6a23c; }
-.stat-icon.danger { background: #f56c6c; }
+.stat-icon.primary {
+  background: #409eff;
+}
+
+.stat-icon.success {
+  background: #67c23a;
+}
+
+.stat-icon.warning {
+  background: #e6a23c;
+}
+
+.stat-icon.danger {
+  background: #f56c6c;
+}
 
 .stat-info h3 {
   margin: 0 0 5px 0;
