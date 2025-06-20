@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.meeting.mapper.CheckinMapper">
+
+    <resultMap id="CheckinResultMap" type="com.company.meeting.entity.MeetingCheckin">
+        <id column="id" property="id"/>
+        <result column="booking_id" property="bookingId"/>
+        <result column="user_id" property="userId"/>
+        <result column="checkin_type" property="checkinType"/>
+        <result column="checkin_time" property="checkinTime"/>
+        <result column="checkin_status" property="checkinStatus"/>
+        <result column="real_name" property="realName"/>
+        <result column="meeting_title" property="meetingTitle"/>
+    </resultMap>
+
+    <select id="findById" resultMap="CheckinResultMap">
+        SELECT c.*, u.real_name, b.meeting_title
+        FROM t_meeting_checkin c
+        LEFT JOIN t_user u ON c.user_id = u.id
+        LEFT JOIN t_meeting_booking b ON c.booking_id = b.id
+        WHERE c.id = #{id}
+    </select>
+
+    <select id="findByBookingId" resultMap="CheckinResultMap">
+        SELECT c.*, u.real_name, b.meeting_title
+        FROM t_meeting_checkin c
+        LEFT JOIN t_user u ON c.user_id = u.id
+        LEFT JOIN t_meeting_booking b ON c.booking_id = b.id
+        WHERE c.booking_id = #{bookingId}
+        ORDER BY c.checkin_time DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="countByBookingId" resultType="int">
+        SELECT COUNT(*) FROM t_meeting_checkin WHERE booking_id = #{bookingId}
+    </select>
+
+    <select id="findByUserId" resultMap="CheckinResultMap">
+        SELECT c.*, u.real_name, b.meeting_title
+        FROM t_meeting_checkin c
+        LEFT JOIN t_user u ON c.user_id = u.id
+        LEFT JOIN t_meeting_booking b ON c.booking_id = b.id
+        WHERE c.user_id = #{userId}
+        ORDER BY c.checkin_time DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM t_meeting_checkin WHERE user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.company.meeting.entity.MeetingCheckin">
+        INSERT INTO t_meeting_checkin (booking_id, user_id, checkin_type, checkin_status)
+        VALUES (#{bookingId}, #{userId}, #{checkinType}, #{checkinStatus})
+    </insert>
+
+    <update id="update" parameterType="com.company.meeting.entity.MeetingCheckin">
+        UPDATE t_meeting_checkin 
+        SET checkin_status = #{checkinStatus}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM t_meeting_checkin WHERE id = #{id}
+    </delete>
+
+    <select id="existsCheckin" resultType="int">
+        SELECT COUNT(*) FROM t_meeting_checkin 
+        WHERE booking_id = #{bookingId} AND user_id = #{userId}
+    </select>
+
+</mapper>

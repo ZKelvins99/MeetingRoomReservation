@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.meeting.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.company.meeting.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="real_name" property="realName"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="role" property="role"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="findById" resultMap="UserResultMap">
+        SELECT * FROM t_user WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="UserResultMap">
+        SELECT * FROM t_user WHERE username = #{username}
+    </select>
+
+    <select id="findAll" resultMap="UserResultMap">
+        SELECT * FROM t_user ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.company.meeting.entity.User">
+        INSERT INTO t_user (username, password, real_name, email, phone, role, status)
+        VALUES (#{username}, #{password}, #{realName}, #{email}, #{phone}, #{role}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.company.meeting.entity.User">
+        UPDATE t_user 
+        SET real_name = #{realName}, email = #{email}, phone = #{phone}, 
+            role = #{role}, status = #{status}, update_time = SYSDATE
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM t_user WHERE id = #{id}
+    </delete>
+
+    <select id="countByRole" resultType="int">
+        SELECT COUNT(*) FROM t_user WHERE role = #{role}
+    </select>
+
+</mapper>

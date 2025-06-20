@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.meeting.mapper.MeetingRoomMapper">
+
+    <resultMap id="MeetingRoomResultMap" type="com.company.meeting.entity.MeetingRoom">
+        <id column="id" property="id"/>
+        <result column="room_name" property="roomName"/>
+        <result column="room_location" property="roomLocation"/>
+        <result column="capacity" property="capacity"/>
+        <result column="equipment" property="equipment"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="findById" resultMap="MeetingRoomResultMap">
+        SELECT * FROM t_meeting_room WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="MeetingRoomResultMap">
+        SELECT * FROM t_meeting_room ORDER BY create_time ASC
+    </select>
+
+    <select id="findAvailable" resultMap="MeetingRoomResultMap">
+        SELECT r.* FROM t_meeting_room r
+        WHERE r.status = 1
+        AND r.id NOT IN (
+            SELECT DISTINCT b.room_id FROM t_meeting_booking b
+            WHERE b.booking_status = 'BOOKED'
+            AND (
+                (b.start_time &lt;= #{startTime} AND b.end_time &gt; #{startTime})
+                OR (b.start_time &lt; #{endTime} AND b.end_time &gt;= #{endTime})
+                OR (b.start_time &gt;= #{startTime} AND b.end_time &lt;= #{endTime})
+            )
+        )
+        ORDER BY r.room_name
+    </select>
+
+    <insert id="insert" parameterType="com.company.meeting.entity.MeetingRoom">
+        INSERT INTO t_meeting_room (room_name, room_location, capacity, equipment, status)
+        VALUES (#{roomName}, #{roomLocation}, #{capacity}, #{equipment}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.company.meeting.entity.MeetingRoom">
+        UPDATE t_meeting_room 
+        SET room_name = #{roomName}, room_location = #{roomLocation}, 
+            capacity = #{capacity}, equipment = #{equipment}, 
+            status = #{status}, update_time = SYSDATE
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM t_meeting_room WHERE id = #{id}
+    </delete>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM t_meeting_room WHERE status = #{status}
+    </select>
+
+</mapper>
