@@ -31,13 +31,17 @@
     </select>
 
     <select id="findByUserId" resultMap="BookingResultMap">
-        SELECT b.*, r.room_name, u.username as user_name, u.real_name
-        FROM t_meeting_booking b
-        LEFT JOIN t_meeting_room r ON b.room_id = r.id
-        LEFT JOIN t_user u ON b.user_id = u.id
-        WHERE b.user_id = #{userId}
-        ORDER BY b.create_time DESC
-        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+        SELECT * FROM (
+                          SELECT ROWNUM as rn, t.* FROM (
+                                                            SELECT b.*, r.room_name, u.username as user_name, u.real_name
+                                                            FROM t_meeting_booking b
+                                                                     LEFT JOIN t_meeting_room r ON b.room_id = r.id
+                                                                     LEFT JOIN t_user u ON b.user_id = u.id
+                                                            WHERE b.user_id = #{userId}
+                                                            ORDER BY b.create_time DESC
+                                                        ) t
+                          WHERE ROWNUM &lt;= #{offset} + #{size}
+                      ) WHERE rn &gt; #{offset}
     </select>
 
     <select id="countByUserId" resultType="int">

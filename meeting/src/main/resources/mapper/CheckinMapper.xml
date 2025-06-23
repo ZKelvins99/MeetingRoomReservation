@@ -22,13 +22,17 @@
     </select>
 
     <select id="findByBookingId" resultMap="CheckinResultMap">
-        SELECT c.*, u.real_name, b.meeting_title
-        FROM t_meeting_checkin c
-        LEFT JOIN t_user u ON c.user_id = u.id
-        LEFT JOIN t_meeting_booking b ON c.booking_id = b.id
-        WHERE c.booking_id = #{bookingId}
-        ORDER BY c.checkin_time DESC
-        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+        SELECT * FROM (
+                          SELECT ROWNUM as rn, t.* FROM (
+                                                            SELECT c.*, u.real_name, b.meeting_title
+                                                            FROM t_meeting_checkin c
+                                                                     LEFT JOIN t_user u ON c.user_id = u.id
+                                                                     LEFT JOIN t_meeting_booking b ON c.booking_id = b.id
+                                                            WHERE c.booking_id = #{bookingId}
+                                                            ORDER BY c.checkin_time DESC
+                                                        ) t
+                          WHERE ROWNUM &lt;= #{offset} + #{size}
+                      ) WHERE rn &gt; #{offset}
     </select>
 
     <select id="countByBookingId" resultType="int">

@@ -77,8 +77,8 @@ export default {
     rooms: {
         getAll: () => api.get('/rooms/list'),
         getById: (id) => api.get(`/rooms/${id}`),
-        create: (data) => api.post('/rooms', data),
-        update: (id, data) => api.put(`/rooms/${id}`, data),
+        create: (data) => api.post('/rooms/add', data),        // 修改为 /add
+        update: (id, data) => api.put('/rooms/update', data),  // 修改为 /update，数据包含id
         delete: (id) => api.delete(`/rooms/${id}`)
     },
 
